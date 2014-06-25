@@ -15,8 +15,6 @@ var server = require('./track/components/mjpeg-stream');
 var stdin = process.openStdin();
 var target = -1;
 var follow = false;
-var localize = false;
-var streamSource = 'ardrone';
 
 process.argv.forEach(function (val, index, array) {
 	if( index == 2 ) target = val;
@@ -43,12 +41,12 @@ bodyParser.process('video/0', function(stream, req, next) {
         }).stream().pipe(detection.cvstream);
 });
 
-detection.cvstream.on('data', function(data){
+detection.cvstream.on('image', function(data){
 	server.update(data);
 });
 
 detection.cvstream.on('found', function(cordinates){
-	console.log();
+	console.log(cordinates);
 });
 
 stdin.addListener("data", function(data) {

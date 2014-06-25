@@ -9,12 +9,12 @@ cvstream.on('load', function(matrix){
 	var object = detection.readImage(matrix, settings, target, true);
 	if(object.cordinates && follow){
 		if(settings.debug) console.log(XYZ);
-		actions.centerTarget(object.cordinates, settings, client);
+		cvstream.emit('found', object.cordinates);
 	} else {
 		console.log('stop');
 		client.stop();
 	}
-	cvstream.emit('data', object.image);
+	cvstream.emit('image', object.image);
 });
 
 exports.readImage = function readImage(data, settings, index, adjustWhiteBalance){
@@ -38,13 +38,13 @@ exports.cvProcess = function cvProcess(err, im_orig, settings, target, whitebala
 		im.save('./stills/matrix.png');
 		if(settings.debug) console.log('matrix.png saved');
 	}
-	var lower_threshold = [0, 0, 0];
-	var upper_threshold = [0, 0, 0];
+	var colors = undefined;
 	if(whiteBalanceAdjust)
-		adjustColors(target, calculateWhiteBalance(png, settings, target));
+		colors = adjustColors(target, calculateWhiteBalance(png, settings, target));
 	else
-		adjustColors(target);
-	im.inRange(lower_threshold, upper_threshold);
+		colors = adjustColors(target);
+		
+	im.inRange(colors.upper, colors.lower);
 
 	if(settings.opencv.saveFiles){
 		im.save('./stills/color.png');
@@ -125,21 +125,18 @@ function calculateWhiteBalance(png, settings, target){
 		console.log('whiteBalanceAdjust: ' + whiteBalanceAdjust);
 	}
 
-	if(settings.debug){
-		console.log(lower_threshold);
-		console.log(upper_threshold);
-	}
 	return whiteBalance / target.whiteBalance;
 };
 
 function adjustColors(target, whitebalance) {
 	if(!whitebalance) whitebalace = 1;
-	lower_threshold = [(target.color[0] * whiteBalanceAdjust) - target.threshold * target.color[0],
+	var lowerThresh = [(target.color[0] * whiteBalanceAdjust) - target.threshold * target.color[0],
 	                   (target.color[1] * whiteBalanceAdjust) - target.threshold * target.color[1],
 	                   (target.color[2] * whiteBalanceAdjust) - target.threshold * target.color[2]];
-	upper_threshold = [(target.color[0] * whiteBalanceAdjust) + target.threshold * target.color[0],
+	var upperThresh = [(target.color[0] * whiteBalanceAdjust) + target.threshold * target.color[0],
 	                   (target.color[1] * whiteBalanceAdjust) + target.threshold * target.color[1],
 	                   (target.color[2] * whiteBalanceAdjust) + target.threshold * target.color[2]];
+	return new Object([lower[lowerThresh],upper[upperThresh]]);
 };
 
 function getCenter(x, y, width, height, settings) {

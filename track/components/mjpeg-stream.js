@@ -6,7 +6,7 @@ var content;
 var stop = false;
 
 app.get('/', function(request, response) {
-	response.send('AR.Drone Image Processing:\
+	response.send('Image Processing:\
 			<br/>\
 			<img src=im.mjpeg width=100% heigth=100%>\
 			<br/>\
@@ -21,8 +21,6 @@ app.get('/im.mjpeg', function(request, res) {
 		'Connection': 'close',
 		'Pragma': 'no-cache'
 	});
-
-	var i = 0;
 
 	res.connection.on('close', function() {
 		stop = true;
@@ -44,7 +42,7 @@ app.get('/im.mjpeg', function(request, res) {
 
 exports.update = function update(img){
 	if(!content)
-		console.log("Image server running")
+		console.log("Image server running");
 	content = img;
 };
 

@@ -15,7 +15,7 @@ exports.calibrate = function calibrate(client){
 	} else {
 		console.log('not connected!');
 	}
-}
+};
 
 exports.hover = function hover(client){
 	if(client){
@@ -30,7 +30,7 @@ exports.hover = function hover(client){
 	} else {
 		console.log('not connected!');
 	}
-}
+};
 
 exports.centerTarget = function centerTarget(cordinates, settings, client){
 	if(client){
@@ -64,7 +64,7 @@ exports.centerTarget = function centerTarget(cordinates, settings, client){
 	} else {
 		console.log('not connected!');
 	}
-}
+};
 
 exports.setDronePosition = function setDronePosition(cordinates, settings, client){
 	if(client){
@@ -97,4 +97,4 @@ exports.setDronePosition = function setDronePosition(cordinates, settings, clien
 	} else {
 		console.log('not connected!');
 	}
-}
+};

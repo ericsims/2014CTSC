@@ -1,11 +1,3 @@
-/**
- * Draw a rectangle around the detected contour
- *
- * @param Matrix im Matrix image to draw lines on
- * @param array contours Array of contours returned from canny.findContours
- * @param int index Index in array to draw
- * @param array Array of B,G,R int values of a color to draw with
- */
 exports.drawBoundingRect = function(im, boundingRect, color) {
 	var firstCorner =  [boundingRect.x, boundingRect.y];
 	var secondCorner = [boundingRect.x + boundingRect.width, boundingRect.y];
@@ -18,14 +10,6 @@ exports.drawBoundingRect = function(im, boundingRect, color) {
 	im.line(thirdCorner, firstCorner, color);
 };
 
-/**
- * Draw a ellipse on the center of a contour
- *
- * @param Matrix im Matrix image to draw lines on
- * @param array contours Array of contours returned from canny.findContours
- * @param int index Index in array to draw
- * @param array Array of B,G,R int values of a color to draw with
- */
 exports.drawCenter = function(im, boundingRect, color, getCenter) {
 	var center = getCenter(
 		boundingRect.x,
@@ -33,6 +17,6 @@ exports.drawCenter = function(im, boundingRect, color, getCenter) {
 		boundingRect.width,
 		boundingRect.height
 	);
+    im.ellipse(center.x, center.y, center.width/2, center.height/2, color);
+};
 
-	im.ellipse(center[0], center[1], 3, 3, color);
-}

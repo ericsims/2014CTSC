@@ -15,8 +15,8 @@
 int main()
 {
   int i, n,
-      cport_nr=25,        /* /dev/ttyS0 (COM1 on windows) */
-      bdrate=9600;       /* 9600 baud */
+      cport_nr=24,        /* /dev/ttyS0 (COM1 on windows) */
+      bdrate=115200;       /* 9600 baud */
 
   unsigned char buf[4096];
 

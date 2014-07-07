@@ -5,7 +5,7 @@ var http = require('http');
 
 exports.cvstream = new cv.ImageDataStream();
 
-cvstream.on('load', function(matrix){
+exports.cvstream.on('load', function(matrix){
 	var object = detection.readImage(matrix, settings, target, true);
 	if(object.cordinates && follow){
 		if(settings.debug) console.log(XYZ);

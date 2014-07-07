@@ -3,8 +3,6 @@ require('js-yaml');
 var fs = require('fs');
 var sys = require("sys");
 var exec = require('child_process').exec;
-var StreamBodyParser = require('stream-body-parser');
-var Transcoder = require('stream-transcoder');
 
 
 var settings = require('./track/config/settings.yaml');
@@ -23,23 +21,7 @@ process.argv.forEach(function (val, index, array) {
 if(target < 0) throw new Error('Please set a target number!');
 
 
-var bodyParser = new StreamBodyParser(this);
-
-bodyParser.process('video/0', function(stream, req, next) {
-    new Transcoder(stream)
-        .maxSize(320, 240)
-        .videoCodec('h264')
-        .videoBitrate(800 * 1000)
-        .fps(25)
-        .audioCodec('libfaac')
-        .sampleRate(44100)
-        .channels(2)
-        .audioBitrate(128 * 1000)
-        .format('mp4')
-        .on('finish', function() {
-            next();
-        }).stream().pipe(detection.cvstream);
-});
+.pipe(detection.cvstream);
 
 detection.cvstream.on('image', function(data){
 	server.update(data);

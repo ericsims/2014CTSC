@@ -29,17 +29,13 @@ void setup() {
 }
 
 void loop() {
-  //gain.write(135); //manual method...
   writeServo(&gain, 1);
+  
+  // TODO: include serial read/write commands
+  // TODO: include relaying sensor values
 }
 
 void homeControls() {
-  /*gain.write(170); //manual method...
-  throttle.write(10);
-  roll.write(90);
-  pitch.write(90);
-  yaw.write(90);*/
-  
   writeServo(&gain, 1);
   writeServo(&throttle, -1);
   writeServo(&roll, 0);

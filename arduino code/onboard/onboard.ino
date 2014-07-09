@@ -1,22 +1,22 @@
-#include <Servo.h>
+#include "Pwm.h"
 
 const int minimumServoPos = 10, maximumServoPos = 170;
 const boolean servoAdjust = false;
 
-int gainPin = 6, // servo outputs to flight computer
+const int gainPin = 6, // servo outputs to flight computer
   throttlePin = 10,
   rollPin = 11,
   pitchPin = 12,
   yawPin = 13;
-int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
+const int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
   pitchAdjustPin = 1,
   yawAdjustPin = 2;
 
-Servo gain, throttle, roll, pitch, yaw;
+Pwm gain, throttle, roll, pitch, yaw;
 
 void setup() {
   Serial.begin(115200);
-  
+    
   gain.attach(gainPin);
   throttle.attach(gainPin);
   roll.attach(gainPin);
@@ -30,7 +30,7 @@ void setup() {
 
 void loop() {
   //gain.write(135); //manual method...
-  writeServo(gain, 1);
+  writeServo(&gain, 1);
 }
 
 void homeControls() {
@@ -40,14 +40,14 @@ void homeControls() {
   pitch.write(90);
   yaw.write(90);*/
   
-  writeServo(gain, 1);
-  writeServo(throttle, -1);
-  writeServo(roll, 0);
-  writeServo(pitch, 0);
-  writeServo(yaw, 0);
+  writeServo(&gain, 1);
+  writeServo(&throttle, -1);
+  writeServo(&roll, 0);
+  writeServo(&pitch, 0);
+  writeServo(&yaw, 0);
 }
 
-boolean writeServo(Servo *servo, int value) { // value from -1 to 1
+boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
   if(servoAdjust) {
     switch(servo->getPin()) {
       case gainPin:
@@ -55,13 +55,13 @@ boolean writeServo(Servo *servo, int value) { // value from -1 to 1
       case throttlePin:
       break;
       case rollPin:
-        value += analogRead(rollAdjustPin)/(512)-1
+        value += analogRead(rollAdjustPin)/(512)-1;
       break;
       case pitchPin:
-        value += analogRead(pitchAdjustPin)/(512)-1
+        value += analogRead(pitchAdjustPin)/(512)-1;
       break;
       case yawPin:
-        value += analogRead(yawAdjustPin)/(512)-1
+        value += analogRead(yawAdjustPin)/(512)-1;
       break;
       default:
       Serial.println("error: servo pin not found");

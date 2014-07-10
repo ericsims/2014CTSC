@@ -1,4 +1,9 @@
 #include "Pwm.h"
+#include "Ultrasonic.h"
+
+const int ultrasonicTrigPin = 123412354124,
+  ultrasonicEchoPin0 = 134134523452345,
+  ultrasonicEchoPin1 = 1234123412341241;
 
 const int minimumServoPos = 10, maximumServoPos = 170;
 const boolean servoAdjust = false;
@@ -11,6 +16,8 @@ const int gainPin = 6, // servo outputs to flight computer
 const int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
   pitchAdjustPin = 1,
   yawAdjustPin = 2;
+  
+
 
 Pwm gain, throttle, roll, pitch, yaw;
 

@@ -1,11 +1,22 @@
 {
-  "targets": [
+  'targets': [
     {
-      "target_name": "track",
-      "sources": [ 
-      	"lib/track.cc",
-      	"lib/Cordinates.cc",
-      	"lib/Cordinates.h"
+      'target_name': 'track',
+       'libraries': [
+          '-lutil',
+          '-L/usr/lib',
+          '-L/usr/local/lib',
+          '-lopencv_core',
+          '-lopencv_imgproc',
+          '-lopencv_objdetect',
+          '-lopencv_highgui'
+        ],
+      'sources': [ 
+      	'lib/track.cc',
+      	'lib/Cordinate.cc',
+      	'lib/Cordinate.h',
+      	'lib/Cv.cc',
+      	'lib/Cv.h'
       ]
     }
   ]

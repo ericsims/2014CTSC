@@ -17,7 +17,7 @@ const int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
   pitchAdjustPin = 1,
   yawAdjustPin = 2;
   
-
+Ultrasonic ultrasonicLeft;
 
 Pwm gain, throttle, roll, pitch, yaw;
 

@@ -108,7 +108,7 @@ void Cv::debug() {
 	}
 }
 
-Cordinate Cv::locatePoint(bool* loop) {
+Cordinate Cv::locatePoint() {
 	VideoCapture cap(0);
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
@@ -119,11 +119,11 @@ Cordinate Cv::locatePoint(bool* loop) {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 220;
+	int iLowV = 100; //220
 	int iHighV = 255;
 
 	Cordinate point;
-	while(true) {
+	do {
 		//Capture a temporary image from the camera
 		Mat imgTmp;
 		cap.read(imgTmp);
@@ -171,10 +171,12 @@ Cordinate Cv::locatePoint(bool* loop) {
 			point.y = posY;
 
 			if (posX >= 0 && posY >= 0) {
-				cout << point.toString();
-				//return point;
+				std::cout << point.toString() << std::endl;
+				return point;
 			}
 		}
-	}
+
+		std::cout << "blah" << std::endl;
+	} while (false);
 	return point;
 }

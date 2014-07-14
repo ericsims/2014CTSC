@@ -3,5 +3,5 @@
 class Cv {
 public:
 	void debug();
-	Cordinate locatePoint(bool* loop);
+	Cordinate locatePoint();
 };

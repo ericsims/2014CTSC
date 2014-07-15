@@ -18,8 +18,8 @@ void printUndef() {
 	std::cout << "undefined" << std::endl;
 }
 
-void call(Cordinate point) {
-	/*Local<Function> cb = Local<Function>::Cast(argues[0]);
+void dataCallback(Cordinate point) {
+	/*Local<Function> cb = Local<Function>::Cast(args[0]);
 	const unsigned argc = 1;
 	Local<Value> argv[argc] = { Local<Value>::New(String::New("hello world")) };
 	cb->Call(Context::GetCurrent()->Global(), argc, argv);*/
@@ -35,7 +35,7 @@ Handle<Value> debug(const Arguments& args) {
 
 Handle<Value> locatePoint(const Arguments& args) {
 	HandleScope scope;
-	cv.locatePoint(&call, &printUndef);
+	cv.locatePoint(&dataCallback, &printUndef);
 
 	/*
 	Cordinate point = cv.locatePoint(&print);

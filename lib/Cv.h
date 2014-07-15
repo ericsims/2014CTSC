@@ -1,7 +1,8 @@
 #include "Cordinate.h"
-
+typedef void (*PointCallback)(Cordinate);
+typedef void (*UndefCallback)();
 class Cv {
 public:
 	void debug();
-	Cordinate locatePoint();
+	void locatePoint(PointCallback, UndefCallback);
 };

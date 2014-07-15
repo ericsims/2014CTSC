@@ -15,6 +15,8 @@
       	'lib/track.cc',
       	'lib/Cordinate.cc',
       	'lib/Cordinate.h',
+      	'lib/rs232.c',
+      	'lib/rs232.h',
       	'lib/Cv.cc',
       	'lib/Cv.h'
       ]

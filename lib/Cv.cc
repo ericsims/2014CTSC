@@ -108,7 +108,7 @@ void Cv::debug() {
 	}
 }
 
-Cordinate Cv::locatePoint() {
+void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 	VideoCapture cap(0);
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
@@ -119,10 +119,11 @@ Cordinate Cv::locatePoint() {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 100; //220
+	int iLowV = 190; //220
 	int iHighV = 255;
 
-	Cordinate point;
+	bool found = false;
+
 	do {
 		//Capture a temporary image from the camera
 		Mat imgTmp;
@@ -162,21 +163,21 @@ Cordinate Cv::locatePoint() {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 1000) {
+		if (dArea > 1 && dArea < 10000) {
 			//calculate the position of the point
-			int posX = (dM10 / dArea)+img.cols/2-50;
-			int posY = (dM01 / dArea)+img.rows/2-50;
+			int posX = (dM10 / dArea) + img.cols/2-50;
+			int posY = (dM01 / dArea) + img.rows/2-50;
 
-			point.x = posX;
-			point.y = posY;
+			Cordinate point(posX, posY);
 
 			if (posX >= 0 && posY >= 0) {
-				std::cout << point.toString() << std::endl;
-				return point;
-			}
-		}
-
-		std::cout << "blah" << std::endl;
-	} while (false);
-	return point;
+				returnPoint(point);
+				found = true;
+			} else
+				found = false;
+		} else
+			found = false;
+		if(!found)
+			returnUndef();
+	} while (true);
 }

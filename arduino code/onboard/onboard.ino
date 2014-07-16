@@ -1,43 +1,53 @@
 #include "Pwm.h"
 #include "Ultrasonic.h"
+#include "State.h"
 
+const int statusPin = 13;
+
+
+// TODO: fix pin numbers
 const int ultrasonicTrigPin = 123412354124,
-  ultrasonicEchoPin0 = 134134523452345,
-  ultrasonicEchoPin1 = 1234123412341241;
+ultrasonicEchoPin0 = 134134523452345,
+ultrasonicEchoPin1 = 1234123412341241;
 
 const int minimumServoPos = 10, maximumServoPos = 170;
 const boolean servoAdjust = false;
 
 const int gainPin = 6, // servo outputs to flight computer
-  throttlePin = 10,
-  rollPin = 11,
-  pitchPin = 12,
-  yawPin = 13;
+throttlePin = 10,
+rollPin = 11,
+pitchPin = 12,
+yawPin = 9;
 const int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
-  pitchAdjustPin = 1,
-  yawAdjustPin = 2;
-  
+pitchAdjustPin = 1,
+yawAdjustPin = 2;
+
 Ultrasonic ultrasonicLeft;
+State statusLed(statusPin);
 
 Pwm gain, throttle, roll, pitch, yaw;
 
 void setup() {
   Serial.begin(115200);
-    
+
   gain.attach(gainPin);
   throttle.attach(gainPin);
   roll.attach(gainPin);
   pitch.attach(gainPin);
   yaw.attach(yawPin);
-  
+
   homeControls();
-  
+
   Serial.println("Status: Setup Complete");
+  
+  statusLed.set(1);
 }
 
 void loop() {
-  writeServo(&gain, 1);
+  statusLed.update();
   
+  writeServo(&gain, 1);
+
   // TODO: include serial read/write commands
   // TODO: include relaying sensor values
 }
@@ -53,27 +63,28 @@ void homeControls() {
 boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
   if(servoAdjust) {
     switch(servo->getPin()) {
-      case gainPin:
+    case gainPin:
       break;
-      case throttlePin:
+    case throttlePin:
       break;
-      case rollPin:
-        value += analogRead(rollAdjustPin)/(512)-1;
+    case rollPin:
+      value += analogRead(rollAdjustPin)/(512)-1;
       break;
-      case pitchPin:
-        value += analogRead(pitchAdjustPin)/(512)-1;
+    case pitchPin:
+      value += analogRead(pitchAdjustPin)/(512)-1;
       break;
-      case yawPin:
-        value += analogRead(yawAdjustPin)/(512)-1;
+    case yawPin:
+      value += analogRead(yawAdjustPin)/(512)-1;
       break;
-      default:
+    default:
       Serial.println("error: servo pin not found");
     }
   }
-  
-  Serial.print("servo pin: ");
-  Serial.println(servo->getPin());
-  
+
   servo->write(value*(maximumServoPos-minimumServoPos)/4);
   return false;
 }
+
+
+
+

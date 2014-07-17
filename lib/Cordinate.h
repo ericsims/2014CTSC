@@ -8,4 +8,3 @@ private:
 	int x;
 	int y;
 };
-

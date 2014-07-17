@@ -6,18 +6,18 @@ const int statusPin = 13;
 
 
 // TODO: fix pin numbers
-const int ultrasonicTrigPin = 123412354124,
-ultrasonicEchoPin0 = 134134523452345,
-ultrasonicEchoPin1 = 1234123412341241;
+const int ultrasonicTrigPin = 7,
+ultrasonicEchoPin0 = 6,
+ultrasonicEchoPin1 = 5;
 
 const int minimumServoPos = 10, maximumServoPos = 170;
 const boolean servoAdjust = false;
 
-const int gainPin = 6, // servo outputs to flight computer
-throttlePin = 10,
-rollPin = 11,
-pitchPin = 12,
-yawPin = 9;
+const int gainPin = 12, // servo outputs to flight computer
+throttlePin = 11,
+rollPin = 10,
+pitchPin = 9,
+yawPin = 8;
 const int rollAdjustPin = 0, // analog inputs. 4,5 reserved for I2C
 pitchAdjustPin = 1,
 yawAdjustPin = 2;
@@ -40,7 +40,7 @@ void setup() {
 
   Serial.println("Status: Setup Complete");
   
-  statusLed.set(1);
+  statusLed.set(State::good);
 }
 
 void loop() {

@@ -4,37 +4,41 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
+#include <pthread.h>
 #include "Cv.h"
+#include "Callback.h"
 
 using namespace v8;
 
 Cv cv;
+static Callback parent;
 
-Handle<v8::Value> do_string_convert_to_v8(const std::string& value) {
+Handle<v8::Value> stdStringTov8(const std::string& value) {
 	return v8::String::New(value.c_str(), value.size());
 }
 
 void printUndef() {
+	parent.call("undef\0");
 	std::cout << "undefined" << std::endl;
 }
 
 void dataCallback(Cordinate point) {
-	/*Local<Function> cb = Local<Function>::Cast(args[0]);
-	const unsigned argc = 1;
-	Local<Value> argv[argc] = { Local<Value>::New(String::New("hello world")) };
-	cb->Call(Context::GetCurrent()->Global(), argc, argv);*/
+	//parent.call("point: " + point.toString());
 	std::cout << point.toString() << std::endl;
 }
 
 Handle<Value> debug(const Arguments& args) {
 	HandleScope scope;
-
 	cv.debug();
 	return scope.Close(String::NewSymbol("0"));
 }
 
 Handle<Value> locatePoint(const Arguments& args) {
 	HandleScope scope;
+
+	// TODO: http://oguzbastemur.blogspot.com/2013/12/multithread-nodejs.html
+
+	parent.init(*args[0], *args[1]);
 	cv.locatePoint(&dataCallback, &printUndef);
 
 	/*

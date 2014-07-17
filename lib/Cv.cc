@@ -2,6 +2,7 @@
 #include <iostream>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "Time.h"
 
 using namespace cv;
 using namespace std;
@@ -21,7 +22,7 @@ void Cv::debug() {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 220;
+	int iLowV = 220; //220
 	int iHighV = 255;
 
 	//Create trackbars in "Control" window
@@ -109,6 +110,7 @@ void Cv::debug() {
 }
 
 void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
+	Time timer(true);
 	VideoCapture cap(0);
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
@@ -119,7 +121,7 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 190; //220
+	int iLowV = 220;
 	int iHighV = 255;
 
 	bool found = false;
@@ -163,7 +165,7 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 10000) {
+		if (dArea > 1 && dArea < 100) {
 			//calculate the position of the point
 			int posX = (dM10 / dArea) + img.cols/2-50;
 			int posY = (dM01 / dArea) + img.rows/2-50;
@@ -179,5 +181,6 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 			found = false;
 		if(!found)
 			returnUndef();
+		//cout << timer.getPerSecond() << endl;
 	} while (true);
 }

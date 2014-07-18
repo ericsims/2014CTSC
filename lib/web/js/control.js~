@@ -1,4 +1,4 @@
-var socket = io.connect(10.36.33.246);
+var socket = io.connect('10.36.33.246');
 socket.on('serverStatus', function (data) {
 	console.log(data);
 	displayStatus(data);

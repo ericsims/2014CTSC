@@ -22,7 +22,7 @@ void Cv::debug() {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 220; //220
+	int iLowV = 220;
 	int iHighV = 255;
 
 	//Create trackbars in "Control" window
@@ -103,13 +103,12 @@ void Cv::debug() {
 
 		if (waitKey(30) == 27) { //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			cvDestroyAllWindows();
-			cout << "esc key is pressed by user" << endl;
 			break;
 		}
 	}
 }
 
-void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
+void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	Time timer(true);
 	VideoCapture cap(0);
 	if ( !cap.isOpened() ) {
@@ -121,7 +120,7 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 220;
+	int iLowV = 10; //220
 	int iHighV = 255;
 
 	bool found = false;
@@ -136,6 +135,7 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 		bool bSuccess = cap.read(img); // read a new frame from video
 		if (!bSuccess) {
 			cout << "Cannot read a frame from video stream" << endl;
+			returnError("Cannot read a frame from video stream");
 		}
 
 		cv::Rect crop(img.cols/2-50, img.rows/2-50, 100, 100);
@@ -165,7 +165,7 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 100) {
+		if (dArea > 1 && dArea < 100000) {
 			//calculate the position of the point
 			int posX = (dM10 / dArea) + img.cols/2-50;
 			int posY = (dM01 / dArea) + img.rows/2-50;
@@ -173,14 +173,12 @@ void Cv::locatePoint(PointCallback returnPoint, UndefCallback returnUndef) {
 			Cordinate point(posX, posY);
 
 			if (posX >= 0 && posY >= 0) {
-				returnPoint(point);
+				current = point;
 				found = true;
 			} else
 				found = false;
 		} else
 			found = false;
-		if(!found)
-			returnUndef();
 		//cout << timer.getPerSecond() << endl;
 	} while (true);
 }

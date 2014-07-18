@@ -14,3 +14,10 @@ Cordinate::Cordinate(int newX, int newY) {
 	x = newX;
 	y = newY;
 }
+
+int Cordinate::getX() {
+	return x;
+}
+int Cordinate::getY() {
+	return y;
+}

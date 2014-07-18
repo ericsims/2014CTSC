@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <stdio.h>
 #include <sstream>
 #include <pthread.h>
+#include <unistd.h>
 #include "Cv.h"
 #include "Callback.h"
 
@@ -12,19 +14,21 @@ using namespace v8;
 
 Cv cv;
 static Callback parent;
+Cordinate currentPoint(0,0);
+int aVar = 0;
+pthread_t threads[1];
 
 Handle<v8::Value> stdStringTov8(const std::string& value) {
 	return v8::String::New(value.c_str(), value.size());
 }
 
-void printUndef() {
-	parent.call("undef\0");
-	std::cout << "undefined" << std::endl;
+void error(std::string err) {
+	//parent.call("error");
+	std::cout << "\033[1;31m" << "Error: " << err << "\033[0m\n" << err << std::endl;
 }
 
-void dataCallback(Cordinate point) {
-	//parent.call("point: " + point.toString());
-	std::cout << point.toString() << std::endl;
+void *print1(void *t) {
+	cv.locatePoint(currentPoint, &error);
 }
 
 Handle<Value> debug(const Arguments& args) {
@@ -35,33 +39,18 @@ Handle<Value> debug(const Arguments& args) {
 
 Handle<Value> locatePoint(const Arguments& args) {
 	HandleScope scope;
-
-	// TODO: http://oguzbastemur.blogspot.com/2013/12/multithread-nodejs.html
-
 	parent.init(*args[0], *args[1]);
-	cv.locatePoint(&dataCallback, &printUndef);
-
-	/*
-	Cordinate point = cv.locatePoint(&print);
-	Local<Object> obj = Object::New();
-	obj->Set(String::NewSymbol("x"), Number::New( point.x ));
-	obj->Set(String::NewSymbol("y"), Number::New( point.y ));
-	obj->Set(String::NewSymbol("z"), Number::New( 0 ));
-	 */
-
-
+	pthread_create(&threads[0], NULL, print1, (void *)0 );
 	return scope.Close(Undefined());
 }
 
-Handle<Value> RunCallback(const Arguments& args) {
+Handle<Value> getDataPoint(const Arguments& args) {
 	HandleScope scope;
 
-	Local<Function> cb = Local<Function>::Cast(args[0]);
-	const unsigned argc = 1;
-	Local<Value> argv[argc] = { Local<Value>::New(String::New("hello world")) };
-	cb->Call(Context::GetCurrent()->Global(), argc, argv);
-
-	return scope.Close(Undefined());
+	Local<Object> obj = Object::New();
+	obj->Set(String::NewSymbol("x"), Number::New( currentPoint.getX() ));
+	obj->Set(String::NewSymbol("y"), Number::New( currentPoint.getY() ));
+	return scope.Close(obj);
 }
 
 void init(Handle<Object> exports) {
@@ -69,7 +58,8 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(debug)->GetFunction());
 	exports->Set(String::NewSymbol("locatePoint"),
 			FunctionTemplate::New(locatePoint)->GetFunction());
+	exports->Set(String::NewSymbol("getDataPoint"),
+			FunctionTemplate::New(getDataPoint)->GetFunction());
 }
-
 
 NODE_MODULE(track, init)

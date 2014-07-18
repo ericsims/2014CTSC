@@ -1,8 +1,9 @@
+#include <string>
 #include "Cordinate.h"
-typedef void (*PointCallback)(Cordinate);
-typedef void (*UndefCallback)();
+
+typedef void (*ErrorCall)(std::string);
 class Cv {
 public:
 	void debug();
-	void locatePoint(PointCallback, UndefCallback);
+	void locatePoint(Cordinate&, ErrorCall);
 };

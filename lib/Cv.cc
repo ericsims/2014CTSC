@@ -111,8 +111,7 @@ void Cv::debug() {
 
 void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	Time timer(true);
-	//VideoCapture cap(0);
-	cap = cv.CaptureFromCAM(-1);
+	VideoCapture cap(-1);
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
 	}

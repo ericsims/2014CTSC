@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -13,7 +14,7 @@
 int main() {
 	int i, n,
 	cport_nr=24,        /* /dev/ttyS0 (COM1 on windows) */
-	bdrate=115200;
+	bdrate=115200;       /* 9600 baud */
 
 	unsigned char buf[4096];
 

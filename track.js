@@ -14,6 +14,7 @@ console.log( track.locatePoint(function(msg) {
 var lastPoint;
 setInterval(function() {
 	var newPoint = track.getDataPoint();
+	console.log(JSON.stringify(newPoint));
 	if(lastPoint != newPoint) {
 		server.sendUpdate('point', JSON.stringify(newPoint));
 		lastPoint = newPoint;

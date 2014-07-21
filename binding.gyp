@@ -22,7 +22,8 @@
       	'lib/rs232.c',
       	'lib/rs232.h',
       	'lib/Cv.cc',
-      	'lib/Cv.h'
+      	'lib/Cv.h',
+      	'lib/serial.cpp'
       ]
     }
   ]

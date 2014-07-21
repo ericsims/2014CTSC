@@ -22,7 +22,7 @@ void Cv::debug() {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 220;
+	int iLowV = 190;
 	int iHighV = 255;
 
 	//Create trackbars in "Control" window
@@ -60,12 +60,12 @@ void Cv::debug() {
 		Mat imgOriginal = img(crop).clone();
 
 		Mat imgHSV;
-
-		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+		// Convert the captured frame from BGR to HSV
+		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV);
 
 		Mat imgThresholded;
-
-		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+		// Threshold the image
+		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded);
 
 		//morphological opening (removes small objects from the foreground)
 		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)) );
@@ -82,7 +82,7 @@ void Cv::debug() {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 1000) {
+		if (dArea > 1 && dArea < 500) {
 			//calculate the position of the point
 			int posX = (dM10 / dArea)+img.cols/2-50;
 			int posY = (dM01 / dArea)+img.rows/2-50;
@@ -98,6 +98,7 @@ void Cv::debug() {
 
 		imshow("Thresholded Image", imgThresholded); //show the thresholded image
 
+		rectangle(imgLines, Point(img.cols/2-50, img.rows/2-50), Point(img.cols/2+50, img.rows/2+50), Scalar(255,0,0));
 		img = img + imgLines;
 		imshow("Original", img); //show the original image
 
@@ -120,10 +121,8 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	int iLowS = 10;
 	int iHighS = 100;
 
-	int iLowV = 10; //220
+	int iLowV = 190; //220
 	int iHighV = 255;
-
-	bool found = false;
 
 	do {
 		//Capture a temporary image from the camera
@@ -143,42 +142,38 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 		Mat imgOriginal = img(crop).clone();
 
 		Mat imgHSV;
-
-		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+		// Convert the captured frame from BGR to HSV
+		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV);
 
 		Mat imgThresholded;
+		// Threshold the image
+		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded);
 
-		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
-
-		//morphological opening (removes small objects from the foreground)
+		// morphological opening (removes small objects from the foreground)
 		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)) );
 		dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)) );
 
-		//morphological closing (removes small holes from the foreground)
+		// morphological closing (removes small holes from the foreground)
 		dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(10, 10)) );
 		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(10, 10)) );
 
-		//Calculate the moments of the thresholded image
+		// Calculate the moments of the thresholded image
 		Moments oMoments = moments(imgThresholded);
 
 		double dM01 = oMoments.m01;
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 100000) {
-			//calculate the position of the point
+		if (dArea > 1 && dArea < 500) {
+			// calculate the position of the point
 			int posX = (dM10 / dArea) + img.cols/2-50;
 			int posY = (dM01 / dArea) + img.rows/2-50;
 
 			Cordinate point(posX, posY);
 
-			if (posX >= 0 && posY >= 0) {
+			if (posX >= 0 && posY >= 0)
 				current = point;
-				found = true;
-			} else
-				found = false;
-		} else
-			found = false;
-		//cout << timer.getPerSecond() << endl;
+		}
+		// cout << timer.getPerSecond() << endl;
 	} while (true);
 }

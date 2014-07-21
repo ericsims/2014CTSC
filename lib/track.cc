@@ -29,6 +29,7 @@ void error(std::string err) {
 
 void *print1(void *t) {
 	cv.locatePoint(currentPoint, &error);
+	return (void*)0;
 }
 
 Handle<Value> debug(const Arguments& args) {

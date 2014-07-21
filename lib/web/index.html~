@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Rocket Test Stand</title>
+<title>Quadcopter Interface</title>
 
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 
@@ -12,6 +12,8 @@
 </head>
 
 <body>
+<canvas id="graphCanvas" width="1600" height="400">Your browser does not support the HTML5 canvas tag.</canvas>
+<br />
 <textarea id='status' class='status'></textarea>
 <br />
 <button onclick="clearStatus()">Clear</button>

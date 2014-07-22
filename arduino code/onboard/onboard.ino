@@ -36,17 +36,16 @@ void setup() {
   pitch.attach(gainPin);
   yaw.attach(yawPin);
 
-  homeControls();
+  //homeControls();
 
   Serial.println("Status: Setup Complete");
-  
+
   statusLed.set(State::good);
 }
 
 void loop() {
   statusLed.update();
-  
-  writeServo(&gain, 1);
+  writeServo(&gain, 0);
 
   // TODO: include serial read/write commands
   // TODO: include relaying sensor values
@@ -84,7 +83,3 @@ boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
   servo->write(value*(maximumServoPos-minimumServoPos)/4);
   return false;
 }
-
-
-
-

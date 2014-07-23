@@ -1,42 +1,44 @@
 #include <Wire.h>
-int HMC6352SlaveAddress = 0x42;
-int HMC6352ReadAddress = 0x41; //"A" in hex, A command is: 
+#include "HMC5883L.h"
 
-int headingValue;
+HMC5883L compass;
+
 
 void setup(){
-  // "The Wire library uses 7 bit addresses throughout. 
-  //If you have a datasheet or sample code that uses 8 bit address, 
-  //you'll want to drop the low bit (i.e. shift the value one bit to the right), 
-  //yielding an address between 0 and 127."
-  HMC6352SlaveAddress = HMC6352SlaveAddress >> 1; // I know 0x42 is less than 127, but this is still required
-
   Serial.begin(9600);
   Wire.begin();
+  
+  compass = HMC5883L(); //new instance of HMC5883L library
+  setupHMC5883L(); //setup the HMC5883L
 }
 
+// Our main program loop.
 void loop(){
-  //"Get Data. Compensate and Calculate New Heading"
-  Wire.beginTransmission(HMC6352SlaveAddress);
-  Wire.write(HMC6352ReadAddress);              // The "Get Data" command
-  Wire.endTransmission();
+  
+  float heading = getHeading();
+  Serial.println(heading);
+  delay(100); //only here to slow down the serial print
 
-  //time delays required by HMC6352 upon receipt of the command
-  //Get Data. Compensate and Calculate New Heading : 6ms
-  delay(6);
+}
 
-  Wire.requestFrom(HMC6352SlaveAddress, 2); //get the two data bytes, MSB and LSB
+void setupHMC5883L(){
+  //Setup the HMC5883L, and check for errors
+  int error;  
+  error = compass.SetScale(1.3); //Set the scale of the compass.
+  if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
 
-  //"The heading output data will be the value in tenths of degrees
-  //from zero to 3599 and provided in binary format over the two bytes."
-  byte MSB = Wire.read();
-  byte LSB = Wire.read();
+  error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
+  if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
+}
 
-  float headingSum = (MSB << 8) + LSB; //(MSB / LSB sum)
-  float headingInt = headingSum / 10; 
+float getHeading(){
+  //Get the reading from the HMC5883L and calculate the heading
+  MagnetometerScaled scaled = compass.ReadScaledAxis(); //scaled values from compass.
+  float heading = atan2(scaled.YAxis, scaled.XAxis);
 
-  Serial.print(headingInt);
-  Serial.println(" degrees");
+  // Correct for when signs are reversed.
+  if(heading < 0) heading += 2*PI;
+  if(heading > 2*PI) heading -= 2*PI;
 
-  delay(100);
+  return heading * RAD_TO_DEG; //radians to degrees
 }

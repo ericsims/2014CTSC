@@ -1,6 +1,8 @@
+#include <Wire.h>
 #include "Pwm.h"
 #include "Ultrasonic.h"
 #include "State.h"
+#include "HMC5883L.h"
 
 const int statusPin = 13;
 
@@ -23,6 +25,7 @@ pitchAdjustPin = 1,
 yawAdjustPin = 2;
 
 Ultrasonic ultrasonicLeft;
+HMC5883L compass;
 State statusLed(statusPin);
 
 Pwm gain, throttle, roll, pitch, yaw;
@@ -36,7 +39,10 @@ void setup() {
   pitch.attach(gainPin);
   yaw.attach(yawPin);
 
-  //homeControls();
+  compass = HMC5883L();
+  setupHMC5883L();
+
+  homeControls();
 
   Serial.println("Status: Setup Complete");
 
@@ -44,8 +50,10 @@ void setup() {
 }
 
 void loop() {
+  delay(100);
   statusLed.update();
   writeServo(&gain, 0);
+  Serial.println(compass.getHeading());
 
   // TODO: include serial read/write commands
   // TODO: include relaying sensor values
@@ -80,6 +88,17 @@ boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
     }
   }
 
-  servo->write(value*(maximumServoPos-minimumServoPos)/4);
+  servo->write((int)value*(maximumServoPos-minimumServoPos)/4);
   return false;
 }
+
+void setupHMC5883L(){
+  //Setup the HMC5883L, and check for errors
+  int error;  
+  error = compass.SetScale(1.3); //Set the scale of the compass.
+  if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
+
+  error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
+  if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
+}
+

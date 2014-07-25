@@ -9,14 +9,17 @@
 #include <unistd.h>
 #include "Cv.h"
 #include "Callback.h"
+#include "Serial.cc"
 
 using namespace v8;
 
 Cv cv;
+
 static Callback parent;
 Cordinate currentPoint(0,0);
+std::string currentStatus = "null";
 int aVar = 0;
-pthread_t threads[1];
+pthread_t threads[2];
 
 Handle<v8::Value> stdStringTov8(const std::string& value) {
 	return v8::String::New(value.c_str(), value.size());
@@ -27,8 +30,13 @@ void error(std::string err) {
 	std::cout << "\033[1;31m" << "Error: " << err << "\033[0m\n" << err << std::endl;
 }
 
-void *print1(void *t) {
+void *startCV(void *t) {
 	cv.locatePoint(currentPoint, &error);
+	return (void*)0;
+}
+
+void *startSerial(void *t) {
+	//serial.test();
 	return (void*)0;
 }
 
@@ -41,7 +49,16 @@ Handle<Value> debug(const Arguments& args) {
 Handle<Value> locatePoint(const Arguments& args) {
 	HandleScope scope;
 	parent.init(*args[0], *args[1]);
-	pthread_create(&threads[0], NULL, print1, (void *)0 );
+	pthread_create(&threads[0], NULL, startCV, (void *)0 );
+	return scope.Close(Undefined());
+}
+
+Handle<Value> serialTest(const Arguments& args) {
+	HandleScope scope;
+	//parent.init(*args[0], *args[1]);
+	//pthread_create(&threads[0], NULL, startSerial, (void *)0 );
+	//while(true);
+	Serial::test();
 	return scope.Close(Undefined());
 }
 
@@ -61,6 +78,8 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(locatePoint)->GetFunction());
 	exports->Set(String::NewSymbol("getDataPoint"),
 			FunctionTemplate::New(getDataPoint)->GetFunction());
+	exports->Set(String::NewSymbol("serialTest"),
+			FunctionTemplate::New(serialTest)->GetFunction());
 }
 
 NODE_MODULE(track, init)

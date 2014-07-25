@@ -285,7 +285,7 @@ void Pwm::detach()
   }
 }
 
-void Pwm::writePos(int value)
+void Pwm::write(int value)
 {  
   if(value < MIN_PULSE_WIDTH)
   {  // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)

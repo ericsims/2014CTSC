@@ -36,8 +36,6 @@
 
 #include "rs232.h"
 
-
-
 #ifdef __linux__   /* Linux */
 
 
@@ -133,6 +131,8 @@ int RS232_OpenComport(int comport_number, int baudrate)
     perror("unable to read portsettings ");
     return(1);
   }
+
+	printf("yay i can do shit\n");
   memset(&new_port_settings, 0, sizeof(new_port_settings));  /* clear the new struct */
 
   new_port_settings.c_cflag = baudr | CS8 | CLOCAL | CREAD;

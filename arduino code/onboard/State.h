@@ -7,7 +7,7 @@ public:
   void update(int);
   enum states {fatal, good, NUM_OF_STATES};  
 private:
-  const int delays [NUM_OF_STATES][2] = {{0,1000}, {1500,50}};
+  const int delays [NUM_OF_STATES][2] = {{1,1000}, {1500,50}};
   int state = 1;
   int statePin;
   long unsigned lastStateUpdate = 0;

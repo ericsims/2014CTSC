@@ -22,7 +22,6 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build
 *bin
-*.out
 
 # Dependency directory
 # Deployed apps should consider commenting this line out:

@@ -1,6 +1,6 @@
 #include "State.h"
 #include <Arduino.h> 
-
+const static int delays [2][2] = {{1,1000}, {1500,50}};
 State::State(int pin) {
   statePin = pin;
   pinMode(pin, OUTPUT);

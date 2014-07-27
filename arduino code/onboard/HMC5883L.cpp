@@ -4,19 +4,19 @@
 HMC5883L::HMC5883L(byte newRes) {
   m_Scale = 1;
   resolution = newRes;
+  average = 0;
 }
 
 float HMC5883L::turn(float newTarget) {
   float pos = getHeading();
-  float displacement = newTarget - pos;
-  if(pos > newTarget+180)
-    displacement = -(360 - displacement);
-
-  
-  Serial.print(displacement);
-  Serial.print(" ");
-  displacement = constrain(displacement, -60, 60);
-  return map (displacement, -60, 60, -100, 100)/1000.0;
+  //if(pos >= 0 && pos < newTarget)
+  //  pos+=360;
+  //float displacement = pos - newTarget;
+  //if(displacement > 180)
+  //  displacement = (360+newTarget)-pos;
+  return (pos);
+  //displacement = constrain(displacement, -60, 60);
+  //return map (displacement, -60, 60, -100, 100)/1000.0;
 
 }
 
@@ -145,6 +145,7 @@ char* HMC5883L::GetErrorText(int errorCode)
 
   return "error not defined.";
 }
+
 
 
 

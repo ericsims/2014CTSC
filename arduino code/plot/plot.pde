@@ -7,7 +7,7 @@ import processing.serial.*;
  // set the window size:
  size(400, 400);        
  
- myPort = new Serial(this, "/dev/ttyACM4", 115200);
+ myPort = new Serial(this, "/dev/ttyACM3", 9600);
  // don't generate a serialEvent() unless you get a newline character:
  myPort.bufferUntil('\n');
  // set inital background:

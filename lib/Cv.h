@@ -6,4 +6,5 @@ class Cv {
 public:
 	void debug();
 	void locatePoint(Cordinate&, ErrorCall);
+	void contours(double, ErrorCall);
 };

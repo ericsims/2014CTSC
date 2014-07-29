@@ -76,11 +76,11 @@ Handle<Value> getDataPoint(const Arguments& args) {
 
 Handle<Value> cords(const Arguments& args) {
 	HandleScope scope;
-	for(int i = 0; i < 180; ++i) {
+	for(int i = 0; i < 90; ++i) {
 		ostringstream ss;
-		ss << (round((rand()%100+100) * cos(((i + 90) * 71.0) / 4068.0)));
+		ss << (round((rand()%100+100) * cos(((i) * 71.0) / 4068.0)));
 		ss << ",";
-		ss << (round((rand()%100+100) * sin(((i + 90) * 71.0) / 4068.0)));
+		ss << (round((rand()%100+100) * sin(((i) * 71.0) / 4068.0)));
 		ss << "\n";
 		map.write(ss.str());
 	}

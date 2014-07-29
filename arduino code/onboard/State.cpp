@@ -1,10 +1,12 @@
 #include "State.h"
 #include <Arduino.h> 
-const static int delays [2][2] = {
+const static int delays [3][2] = {
   {
-    0,1000      }
-  , {
-    1500,50      }
+    0,1000    }
+  ,{
+    1500,50    }
+  ,{
+    50,50    }
 };
 State::State(int pin) {
   statePin = pin;
@@ -24,7 +26,8 @@ void State::update() {
       stateLightState = !stateLightState;
       digitalWrite(statePin, stateLightState);
     }
-  } else lastStateUpdate = millis();
+  } 
+  else lastStateUpdate = millis();
 }
 
 int State::read() {
@@ -34,6 +37,10 @@ int State::read() {
 void State::set(int newState) {
   state = newState;
 }
+
+
+
+
 
 
 

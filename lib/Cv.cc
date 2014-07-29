@@ -177,3 +177,43 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 		// cout << timer.getPerSecond() << endl;
 	} while (true);
 }
+
+void Cv::contours(double angle, ErrorCall returnError) {
+/*	Time timer(true);
+	VideoCapture cap(-1);
+	if ( !cap.isOpened() ) {
+		cout << "Cannot open the web cam" << endl;
+	}
+	do {
+		//Capture a temporary image from the camera
+		Mat imgTmp;
+		cap.read(imgTmp);
+
+		Mat imgOriginal;
+
+		bool bSuccess = cap.read(imgOriginal); // read a new frame from video
+		if (!bSuccess) {
+			cout << "Cannot read a frame from video stream" << endl;
+			returnError("Cannot read a frame from video stream");
+		}
+		// Calculate the moments of the thresholded image
+		Moments oMoments = moments(imgThresholded);
+
+		double dM01 = oMoments.m01;
+		double dM10 = oMoments.m10;
+		double dArea = oMoments.m00;
+
+		if (dArea > 1 && dArea < 500) {
+			// calculate the position of the point
+			int posX = (dM10 / dArea) + img.cols/2-50;
+			int posY = (dM01 / dArea) + img.rows/2-50;
+
+			Cordinate point(posX, posY);
+
+			if (posX >= 0 && posY >= 0)
+				current = point;
+		}
+		// cout << timer.getPerSecond() << endl;
+	} while (true);*/
+}
+

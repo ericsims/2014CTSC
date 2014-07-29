@@ -7,16 +7,19 @@
 #include <sstream>
 #include <pthread.h>
 #include <unistd.h>
+#include <math.h>
 #include "Cv.h"
 #include "Callback.h"
 #include "Serial.cc"
+#include "Map.h"
 
 using namespace v8;
 
 Cv cv;
-
 static Callback parent;
 Cordinate currentPoint(0,0);
+Map map;
+
 std::string currentStatus = "null";
 int aVar = 0;
 pthread_t threads[2];
@@ -71,6 +74,20 @@ Handle<Value> getDataPoint(const Arguments& args) {
 	return scope.Close(obj);
 }
 
+Handle<Value> cords(const Arguments& args) {
+	HandleScope scope;
+	for(int i = 0; i < 180; ++i) {
+		ostringstream ss;
+		ss << (round((rand()%100+100) * cos(((i + 90) * 71.0) / 4068.0)));
+		ss << ",";
+		ss << (round((rand()%100+100) * sin(((i + 90) * 71.0) / 4068.0)));
+		ss << "\n";
+		map.write(ss.str());
+	}
+	map.close();
+	return scope.Close(Undefined());
+}
+
 void init(Handle<Object> exports) {
 	exports->Set(String::NewSymbol("debug"),
 			FunctionTemplate::New(debug)->GetFunction());
@@ -80,6 +97,8 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(getDataPoint)->GetFunction());
 	exports->Set(String::NewSymbol("serialTest"),
 			FunctionTemplate::New(serialTest)->GetFunction());
+	exports->Set(String::NewSymbol("cords"),
+			FunctionTemplate::New(cords)->GetFunction());
 }
 
 NODE_MODULE(track, init)

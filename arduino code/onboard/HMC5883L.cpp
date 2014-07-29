@@ -4,23 +4,21 @@
 HMC5883L::HMC5883L(byte newRes) {
   m_Scale = 1;
   resolution = newRes;
-  average = 0;
 }
 
 float HMC5883L::turn(float newTarget) {
   float pos = getHeading();
-  //if(pos >= 0 && pos < newTarget)
-  //  pos+=360;
-  //float displacement = pos - newTarget;
-  //if(displacement > 180)
-  //  displacement = (360+newTarget)-pos;
-  return (pos);
-  //displacement = constrain(displacement, -60, 60);
-  //return map (displacement, -60, 60, -100, 100)/1000.0;
-
+  if(pos >= 0 && pos < newTarget)
+    pos+=360;
+  float displacement = pos - newTarget;
+  if(displacement > 180)
+    displacement = -((360+newTarget)-pos);
+  displacement = constrain(displacement, -60, 60);
+  return map (displacement, 60, -60, -100, 100)/1000.0;
 }
 
 float HMC5883L::getHeading() {
+  float average = 0;
   int iteration = 0;
   while(true) {
     if(iteration < resolution) {
@@ -40,9 +38,7 @@ float HMC5883L::getHeading() {
     else
       break;
   }
-  float tmp = average;
-  average = 0;
-  return tmp;
+  return average;
 }
 
 MagnetometerRaw HMC5883L::ReadRawAxis() {

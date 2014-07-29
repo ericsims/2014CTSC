@@ -50,7 +50,6 @@ protected:
 private:
   float m_Scale;
   byte resolution;
-  float average;
   float target;
 };
 #endif

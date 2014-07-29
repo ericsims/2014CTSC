@@ -37,9 +37,9 @@ void setup() {
   Serial.begin(115200);
 
   gain.attach(gainPin);
-  throttle.attach(gainPin);
-  roll.attach(gainPin);
-  pitch.attach(gainPin);
+  //throttle.attach(throttlePin);
+  //roll.attach(rollPin);
+  //pitch.attach(pitchPin);
   yaw.attach(yawPin);
 
   setupHMC5883L();
@@ -52,30 +52,25 @@ void setup() {
 }
 
 void loop() {
-  delay(1000);
+  delay(10);
   statusLed.update();
-  if(pulseIn(channel6, HIGH, 3000) > 1000)
+  if(pulseIn(channel6, HIGH) > 2000) {
     statusLed.set(State::fatal);
-  else
+    yaw.write(compass.turn(0));//writeServo(&yaw, compass.turn(0));
+  } else if(pulseIn(channel6, HIGH) > 1000) {
     statusLed.set(State::good);
-
-
-  writeServo(&gain, 0);
-  writeServo(&yaw, compass.turn(0));
-  
-
-  Serial.print("compass: ");
-  Serial.println(compass.turn(90));
+    homeControls();
+  }
 
   // TODO: include serial read/write commands
   // TODO: include relaying sensor values
 }
 
 void homeControls() {
-  writeServo(&gain, 1);
-  writeServo(&throttle, -1);
-  writeServo(&roll, 0);
-  writeServo(&pitch, 0);
+  writeServo(&gain, .8);
+  //writeServo(&throttle, -1);
+  //writeServo(&roll, 0);
+  //writeServo(&pitch, 0);
   writeServo(&yaw, 0);
 }
 
@@ -93,7 +88,7 @@ boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
       value += analogRead(pitchAdjustPin)/(512)-1;
       break;
     case yawPin:
-      value += 0;//analogRead(yawAdjustPin)/(512)-1;
+      value +=  analogRead(yawAdjustPin)/(512)-1;
       break;
     default:
       Serial.println("error: servo pin not found");
@@ -113,5 +108,6 @@ void setupHMC5883L(){
   error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
   if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
 }
+
 
 

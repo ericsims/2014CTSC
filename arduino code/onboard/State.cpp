@@ -1,6 +1,11 @@
 #include "State.h"
 #include <Arduino.h> 
-const static int delays [2][2] = {{1,1000}, {1500,50}};
+const static int delays [2][2] = {
+  {
+    0,1000      }
+  , {
+    1500,50      }
+};
 State::State(int pin) {
   statePin = pin;
   pinMode(pin, OUTPUT);
@@ -14,23 +19,12 @@ void State::update(int newState) {
 
 void State::update() {
   if(lastStateUpdate) {
-    if (stateLightState) {
-      if (millis() - lastStateUpdate >= delays[state][1]) {
-        digitalWrite(statePin, LOW);
-        stateLightState = false;
-        lastStateUpdate = millis();
-      }
-    } 
-    else {
-      if (millis() - lastStateUpdate >= delays[state][0]) {
-        digitalWrite(statePin, HIGH);
-        stateLightState = true;
-        lastStateUpdate = millis();
-      }
+    if (millis() - lastStateUpdate >= delays[state][(int)stateLightState]) {
+      lastStateUpdate = millis();
+      stateLightState = !stateLightState;
+      digitalWrite(statePin, stateLightState);
     }
-  } else {
-    lastStateUpdate = millis();
-  }
+  } else lastStateUpdate = millis();
 }
 
 int State::read() {
@@ -40,3 +34,6 @@ int State::read() {
 void State::set(int newState) {
   state = newState;
 }
+
+
+

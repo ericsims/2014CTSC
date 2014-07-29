@@ -42,7 +42,7 @@
  attached()  - Returns true if there is a servo attached. 
  detach()    - Stops an attached servos from pulsing its i/o pin. 
  
-*/
+ */
 
 #include <avr/interrupt.h>
 #include <Arduino.h> 
@@ -174,7 +174,7 @@ static void initISR(timer16_Sequence_t timer)
     TCNT3 = 0;              // clear the timer count 
 #if defined(__AVR_ATmega128__)
     TIFR |= _BV(OCF3A);     // clear any pending interrupts;   
-	ETIMSK |= _BV(OCIE3A);  // enable the output compare interrupt     
+    ETIMSK |= _BV(OCIE3A);  // enable the output compare interrupt     
 #else  
     TIFR3 = _BV(OCF3A);     // clear any pending interrupts; 
     TIMSK3 =  _BV(OCIE3A) ; // enable the output compare interrupt      
@@ -208,26 +208,26 @@ static void initISR(timer16_Sequence_t timer)
 
 static void finISR(timer16_Sequence_t timer)
 {
-    //disable use of the given timer
+  //disable use of the given timer
 #if defined WIRING   // Wiring
   if(timer == _timer1) {
-    #if defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
     TIMSK1 &=  ~_BV(OCIE1A) ;  // disable timer 1 output compare interrupt
-    #else 
+#else 
     TIMSK &=  ~_BV(OCIE1A) ;  // disable timer 1 output compare interrupt   
-    #endif
+#endif
     timerDetach(TIMER1OUTCOMPAREA_INT); 
   }
   else if(timer == _timer3) {     
-    #if defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
     TIMSK3 &= ~_BV(OCIE3A);    // disable the timer3 output compare A interrupt
-    #else
+#else
     ETIMSK &= ~_BV(OCIE3A);    // disable the timer3 output compare A interrupt
-    #endif
+#endif
     timerDetach(TIMER3OUTCOMPAREA_INT);
   }
 #else
-    //For arduino - in future: call here to a currently undefined function to reset the timer
+  //For arduino - in future: call here to a currently undefined function to reset the timer
 #endif
 }
 
@@ -248,7 +248,7 @@ Pwm::Pwm()
 {
   if( PwmCount < MAX_SERVOS) {
     this->servoIndex = PwmCount++;                    // assign a servo index to this instance
-	servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values  - 12 Aug 2009
+    servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values  - 12 Aug 2009
   }
   else
     this->servoIndex = INVALID_SERVO ;  // too many servos 
@@ -287,13 +287,16 @@ void Pwm::detach()
 
 void Pwm::write(int value)
 {  
-  if(value < MIN_PULSE_WIDTH)
-  {  // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
-    if(value < 0) value = 0;
-    if(value > 180) value = 180;
-    value = map(value, 0, 180, SERVO_MIN(),  SERVO_MAX());      
+  if(value != lastValue) {
+    lastValue = value;
+    if(value < MIN_PULSE_WIDTH)
+    {  // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
+      if(value < 0) value = 0;
+      if(value > 180) value = 180;
+      value = map(value, 0, 180, SERVO_MIN(),  SERVO_MAX());      
+    }
+    this->writeMicroseconds(value);
   }
-  this->writeMicroseconds(value);
 }
 
 void Pwm::writeMicroseconds(int value)
@@ -306,8 +309,8 @@ void Pwm::writeMicroseconds(int value)
       value = SERVO_MIN();
     else if( value > SERVO_MAX() )
       value = SERVO_MAX();   
-    
-  	value = value - TRIM_DURATION;
+
+    value = value - TRIM_DURATION;
     value = usToTicks(value);  // convert to ticks after compensating for interrupt overhead - 12 Aug 2009
 
     uint8_t oldSREG = SREG;
@@ -343,3 +346,4 @@ int Pwm::getPin()
 {
   return servos[this->servoIndex].Pin.nbr;
 }
+

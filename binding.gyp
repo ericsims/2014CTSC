@@ -17,6 +17,8 @@
       	'lib/Cordinate.h',
       	'lib/Callback.cc',
       	'lib/Callback.h',
+      	'lib/Map.cc',
+      	'lib/Map.h',
       	'lib/Time.cc',
       	'lib/Time.h',
       	'lib/rs232.c',

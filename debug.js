@@ -1,5 +1,4 @@
 var track = require("./build/Release/obj.target/track.node");
 
 //track.debug();
-track.serialTest();
-//track.cords();
+track.cords();

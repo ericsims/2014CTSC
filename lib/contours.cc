@@ -84,7 +84,7 @@ void thresh_callback(int, void* ) {
 		drawContours( drawing, contours, i, color[0], 1, 8, hierarchy, 0, Point() );
 	}
 	int tempDis = (mc[max[0]].x - lastPoint.x);
-	if (tempDis < 50 && abs(lastArea - max[1]) < 50) {
+	if (tempDis < 10 && abs(lastArea - max[1]) < 50) {
 		displacement[0] += tempDis;
 		cout << displacement[0] << endl;
 		drawContours( drawing, contours, max[0], color[2], 8, 8, hierarchy, 0, Point() );

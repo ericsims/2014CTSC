@@ -11,9 +11,10 @@
 #endif
 
 #include "rs232.h"
+typedef void (*ErrorCall)(std::string);
 class Serial {
 public:
-	static void test() {
+	static void pollBuffer(unsigned char buffer[], ErrorCall returnError) {
 		int i, n,
 		cport_nr=27,        // /dev/ttyS0 (COM1 on windows)
 		bdrate=9600;      // 9600 baud
@@ -27,12 +28,13 @@ public:
 
 		while(true) {
 			usleep(10000);
+			/*
 			std::string s = "123";
 			unsigned char *a=new unsigned char[s.size()+1];
 			a[s.size()]=0;
 			memcpy(a,s.c_str(),s.size());
 			RS232_SendBuf(cport_nr, a, s.size());
-			std::cout << a << std::endl;
+			*/
 			n = RS232_PollComport(cport_nr, buf, 4095);
 
 			if(n > 0) {
@@ -43,8 +45,9 @@ public:
 						buf[i] = '.';
 					}
 				}
+				buffer = buf;
 				std::cout << "received %i bytes: %s    " << buf;
-				}
+			}
 
 #ifdef _WIN32
 			Sleep(100);

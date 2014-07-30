@@ -178,42 +178,85 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	} while (true);
 }
 
-void Cv::contours(double angle, ErrorCall returnError) {
-/*	Time timer(true);
+void Cv::displacement(int &angle, ErrorCall returnError) {
+	Mat src; Mat src_gray;
+	int thresh = 100;
+	bool initialized = false;
+	Point lastPoint;
+	int lastArea = 0, displacement[2] = {0, 0};
+	RNG rng(12345);
+	vector<vector<Point> > lastContours;
+
+	Time timer(true);
 	VideoCapture cap(-1);
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
 	}
 	do {
-		//Capture a temporary image from the camera
-		Mat imgTmp;
-		cap.read(imgTmp);
+		cap.read(src);
 
-		Mat imgOriginal;
+		//cvtColor( src, src, CV_BGR2GRAY );
+		erode(src, src, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(src, src, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		blur(src, src, Size(3,3));
 
-		bool bSuccess = cap.read(imgOriginal); // read a new frame from video
-		if (!bSuccess) {
-			cout << "Cannot read a frame from video stream" << endl;
-			returnError("Cannot read a frame from video stream");
+		Mat canny_output;
+		vector<vector<Point> > contours;
+		vector<Vec4i> hierarchy;
+
+		/// Detect edges using canny
+		Canny( src, canny_output, thresh, thresh*2, 3 );
+		/// Find contours
+		findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+		if(!initialized) {
+			lastContours = contours;
+			lastArea = 0;
+			lastPoint = Point2f(0, 0);
+			initialized = true;
+			cout << "contours initialized" << endl;
 		}
-		// Calculate the moments of the thresholded image
-		Moments oMoments = moments(imgThresholded);
 
-		double dM01 = oMoments.m01;
-		double dM10 = oMoments.m10;
-		double dArea = oMoments.m00;
+		Scalar color[] = {Scalar(100, 100, 0), Scalar(255, 0, 255), Scalar(0, 0, 255)};
 
-		if (dArea > 1 && dArea < 500) {
-			// calculate the position of the point
-			int posX = (dM10 / dArea) + img.cols/2-50;
-			int posY = (dM01 / dArea) + img.rows/2-50;
+		vector<Moments> mu(contours.size() );
+		for( unsigned int i = 0; i < contours.size(); i++ )
+			mu[i] = moments( contours[i], false );
 
-			Cordinate point(posX, posY);
+		///  Get the mass centers:
+		vector<Point2f> mc( contours.size() );
+		for( unsigned int i = 0; i < contours.size(); i++ )
+			mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 );
 
-			if (posX >= 0 && posY >= 0)
-				current = point;
+		/// Draw contours
+		int max[2] = {0, 0};
+		Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+		for( unsigned int i = 0; i< contours.size(); i++ ) {
+			int area = contourArea(contours[i]);
+			if(area > max[1]) {
+				max[0] = i;
+				max[1] = area;
+			}
+			drawContours( drawing, contours, i, color[0], 1, 8, hierarchy, 0, Point() );
 		}
-		// cout << timer.getPerSecond() << endl;
-	} while (true);*/
+		int tempDis[2] = {(mc[max[0]].x - lastPoint.x), (mc[max[0]].y - lastPoint.y)};
+		if (sqrt(tempDis[0]^2+timpDos[1]^2) < 10 && abs(lastArea - max[1]) < 50) {
+			displacement[0] += tempDis;
+			cout << displacement[0] << endl;
+			drawContours( drawing, contours, max[0], color[2], 8, 8, hierarchy, 0, Point() );
+			circle( drawing, mc[max[0]], 4, color[1], -1, 8, 0 );
+			line(drawing, lastPoint, mc[max[0]], color[2], 1, 8, 0);
+		}
+		lastArea = max[1];
+		lastPoint = mc[max[0]];
+
+		if(true) {
+			/// Show in a window
+			namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+			imshow( "Contours", drawing + src );
+		}
+
+		angle = displacement[0];
+	} while (true);
 }
 

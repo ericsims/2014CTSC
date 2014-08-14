@@ -4,6 +4,8 @@
 #include "State.h"
 #include "HMC5883L.h"
 
+const double DEG_RAD = 0.0174532925;
+
 const int statusPin = 13;        // digital out 13
 const int channel6 = 2;          // digital in 2
 
@@ -27,7 +29,8 @@ const int rollAdjustPin = 0,     // analog in 0
 pitchAdjustPin = 1,              // analog in 1
 yawAdjustPin = 2;                // analog in 2
 
-Ultrasonic ultrasonicLeft, ultrasonicRight;
+Ultrasonic ultrasonicLeft(ultrasonicTrigPin, ultrasonicEchoPin0);
+Ultrasonic ultrasonicRight(ultrasonicTrigPin, ultrasonicEchoPin1);
 HMC5883L compass((byte) 1);  
 State statusLed(statusPin);
 
@@ -42,9 +45,6 @@ void setup() {
   //pitch.attach(pitchPin);
   yaw.attach(yawPin);
 
-  ultrasonicLeft.attach(ultrasonicTrigPin, ultrasonicEchoPin0);
-  ultrasonicRight.attach(ultrasonicTrigPin, ultrasonicEchoPin1);
-
   setupHMC5883L();
 
   homeControls();
@@ -55,32 +55,33 @@ void setup() {
 }
 
 void loop() {
+  delay(100);
   statusLed.update();
-  unsigned long pulse = pulseIn(channel6, HIGH, 10000);
-  if(pulse > 2000) {
-    statusLed.set(State::running);
-    //yaw.write(compass.turn(0));//writeServo(&yaw, compass.turn(0));
-    unsigned long distanceL = ultrasonicLeft.read();    
-    float heading = compass.getHeading();
-    if(distanceL) {
-      Serial.print(round(distanceL * cos(((heading - 90) * 71.0) / 4068.0)));
-      Serial.print(",");
-      Serial.println(round(distanceL * sin(((heading - 90) * 71.0) / 4068.0)));
-    }    /*
-    unsigned long distanceR = ultrasonicRight.read();
-     if(distanceR) {
-     Serial.print(round(distanceR * cos(((heading) * 71.0) / 4068.0)));
-     Serial.print(",");
-     Serial.println(round(distanceR * sin(((heading) * 71.0) / 4068.0)));
-     }*/
-  } 
-  else if(pulse > 1000) {
-    statusLed.set(State::good);
-    homeControls();
-  } 
-  else {
-    statusLed.set(State::fatal);
+  //unsigned long pulse = pulseIn(channel6, HIGH, 10000);
+  // if(pulse > 2000) {
+  statusLed.set(State::running);
+  //yaw.write(compass.turn(0));//writeServo(&yaw, compass.turn(0));
+  unsigned long distanceL = ultrasonicLeft.read();    
+  float heading = compass.getHeading();
+  if(distanceL) {
+    Serial.print( round(distanceL * cos((heading-45) * DEG_RAD)) );
+    Serial.print(",");
+    Serial.println( round(distanceL * sin((heading-45) * DEG_RAD)) );
   }
+  unsigned long distanceR = ultrasonicRight.read();
+  if(distanceR) {
+    Serial.print( round(distanceR * cos((heading+45) * DEG_RAD)) );
+    Serial.print(",,");
+    Serial.println( round(distanceR * sin((heading+45) * DEG_RAD)) );
+  }
+  /*} 
+   else if(pulse > 1000) {
+   statusLed.set(State::good);
+   homeControls();
+   } 
+   else {
+   statusLed.set(State::fatal);
+   }*/
 
   // TODO: include serial read/write commands
   // TODO: include relaying sensor values
@@ -122,16 +123,9 @@ boolean writeServo(Pwm *servo, int value) { // value from -1 to 1
 void setupHMC5883L(){
   //Setup the HMC5883L, and check for errors
   int error;  
-  error = compass.SetScale(1.3); //Set the scale of the compass.
+  error = compass.SetScale(.88); //Set the scale of the compass.
   if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
 
   error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
   if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
 }
-
-
-
-
-
-
-

@@ -141,12 +141,3 @@ char* HMC5883L::GetErrorText(int errorCode)
 
   return "error not defined.";
 }
-
-
-
-
-
-
-
-
-

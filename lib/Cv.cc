@@ -16,13 +16,13 @@ void Cv::debug() {
 
 	namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-	int iLowH = 20;
-	int iHighH = 123;
+	int iLowH = 150;
+	int iHighH = 180;
 
 	int iLowS = 10;
-	int iHighS = 100;
+	int iHighS = 175;
 
-	int iLowV = 190;
+	int iLowV = 180;
 	int iHighV = 255;
 
 	//Create trackbars in "Control" window
@@ -82,7 +82,7 @@ void Cv::debug() {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 500) {
+		if (dArea > 1500 && dArea < 5000) {
 			//calculate the position of the point
 			int posX = (dM10 / dArea)+img.cols/2-50;
 			int posY = (dM01 / dArea)+img.rows/2-50;
@@ -115,13 +115,13 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
 	}
-	int iLowH = 20;
-	int iHighH = 123;
+	int iLowH = 150;
+	int iHighH = 180;
 
-	int iLowS = 10;
-	int iHighS = 100;
+	int iLowS = 21;
+	int iHighS = 175;
 
-	int iLowV = 190; //220
+	int iLowV = 190;
 	int iHighV = 255;
 
 	do {
@@ -164,7 +164,7 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		if (dArea > 1 && dArea < 500) {
+		if (dArea > 1500 && dArea < 5000) {
 			// calculate the position of the point
 			int posX = (dM10 / dArea) + img.cols/2-50;
 			int posY = (dM01 / dArea) + img.rows/2-50;
@@ -239,9 +239,9 @@ void Cv::displacement(int &angle, ErrorCall returnError) {
 			}
 			drawContours( drawing, contours, i, color[0], 1, 8, hierarchy, 0, Point() );
 		}
-		int tempDis[2] = {(mc[max[0]].x - lastPoint.x), (mc[max[0]].y - lastPoint.y)};
-		if (sqrt(tempDis[0]^2+timpDos[1]^2) < 10 && abs(lastArea - max[1]) < 50) {
-			displacement[0] += tempDis;
+		int tempDis[2] = {(int)(mc[max[0]].x - lastPoint.x), (int)(mc[max[0]].y - lastPoint.y)};
+		if(sqrt( (tempDis[0]^2) + (tempDis[1]^2) ) < 10 && abs(lastArea - max[1]) < 50) {
+			displacement[0] += tempDis[0];
 			cout << displacement[0] << endl;
 			drawContours( drawing, contours, max[0], color[2], 8, 8, hierarchy, 0, Point() );
 			circle( drawing, mc[max[0]], 4, color[1], -1, 8, 0 );

@@ -69,7 +69,7 @@ Handle<Value> getDataPoint(const Arguments& args) {
 
 Handle<Value> cords(const Arguments& args) {
 	HandleScope scope;
-	pthread_create(&threads[1], NULL, startCvDisplacement, (void *)0 );
+	//pthread_create(&threads[1], NULL, startCvDisplacement, (void *)0 );
 	//pthread_create(&threads[2], NULL, *serial.pollBuffer(serialBuffer, &error), (void *)0 );
 	for(int i = 0; i < 180; ++i) {
 		ostringstream ss;
@@ -81,6 +81,7 @@ Handle<Value> cords(const Arguments& args) {
 		ss << (round((rand()%100+100) * sin(((i) * 71.0) / 4068.0)));
 		ss << "\n";*/
 		map.write(ss.str());
+		sleep(1);
 	}
 	map.close();
 	return scope.Close(Undefined());

@@ -24,7 +24,7 @@ double Ultrasonic::read() {
     digitalWrite(trigPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
-    duration = pulseIn(echoPin, HIGH, 20000);
+    duration = pulseIn(echoPin, HIGH, 80000);
     if(duration == 0)
       return 0;
     distance += (duration/2) / 29.1 / 10;

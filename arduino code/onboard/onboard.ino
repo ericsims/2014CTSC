@@ -49,7 +49,7 @@ void setup() {
 
   homeControls();
 
-  //Serial.println("Status: Setup Complete");
+  Serial.println("Status: Setup Complete");
 
   statusLed.set(State::good);
 }
@@ -60,24 +60,25 @@ void loop() {
   if(pulse > 2000) {
     statusLed.set(State::running);
     //yaw.write(compass.turn(0));//writeServo(&yaw, compass.turn(0));
-    unsigned long distanceL = ultrasonicLeft.read();
+    unsigned long distanceL = ultrasonicLeft.read();    
     float heading = compass.getHeading();
     if(distanceL) {
       Serial.print(round(distanceL * cos(((heading - 90) * 71.0) / 4068.0)));
       Serial.print(",");
       Serial.println(round(distanceL * sin(((heading - 90) * 71.0) / 4068.0)));
-    }/*
+    }    /*
     unsigned long distanceR = ultrasonicRight.read();
-    if(distanceR) {
-      Serial.print(round(distanceR * cos(((heading) * 71.0) / 4068.0)));
-      Serial.print(",");
-      Serial.println(round(distanceR * sin(((heading) * 71.0) / 4068.0)));
-    }*/
+     if(distanceR) {
+     Serial.print(round(distanceR * cos(((heading) * 71.0) / 4068.0)));
+     Serial.print(",");
+     Serial.println(round(distanceR * sin(((heading) * 71.0) / 4068.0)));
+     }*/
   } 
   else if(pulse > 1000) {
     statusLed.set(State::good);
     homeControls();
-  } else {
+  } 
+  else {
     statusLed.set(State::fatal);
   }
 
@@ -127,6 +128,7 @@ void setupHMC5883L(){
   error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
   if(error != 0) Serial.println(compass.GetErrorText(error)); //check if there is an error, and print if so
 }
+
 
 
 

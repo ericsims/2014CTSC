@@ -18,7 +18,7 @@ using namespace v8;
 Cv cv;
 static Callback parent;
 Cordinate currentPoint(0,0);
-unsigned char serialBuffer[4096];
+unsigned char serialBuffer[4096] = {0};
 int displacement[2];
 Map map;
 
@@ -33,6 +33,11 @@ Handle<v8::Value> stdStringTov8(const std::string& value) {
 void error(std::string err) {
 	//parent.call("error");
 	std::cout << "\033[1;31m" << "Error: " << err << "\033[0m\n" << err << std::endl;
+	exit(1);
+}
+
+void serialData(unsigned char buf[4096]) {
+	//std::cout << buf << endl;
 }
 
 void *startCvLocate(void *t) {
@@ -41,6 +46,10 @@ void *startCvLocate(void *t) {
 }
 void *startCvDisplacement(void *t) {
 	cv.displacement(displacement[0], &error);
+	return (void*)0;
+}
+void *startPollBuffer(void *t) {
+	Serial::pollBuffer(serialBuffer, &serialData, &error);
 	return (void*)0;
 }
 
@@ -70,19 +79,24 @@ Handle<Value> getDataPoint(const Arguments& args) {
 Handle<Value> cords(const Arguments& args) {
 	HandleScope scope;
 	//pthread_create(&threads[1], NULL, startCvDisplacement, (void *)0 );
-	//pthread_create(&threads[2], NULL, *serial.pollBuffer(serialBuffer, &error), (void *)0 );
-	for(int i = 0; i < 180; ++i) {
+	pthread_create(&threads[2], NULL, startPollBuffer, (void *)0 );
+	/*for(int i = 0; i < 180; ++i) {
 		ostringstream ss;
 		ss << displacement[0];
 		ss << ",";
-	//	ss << serialBuffer;
-		/*ss << (round((rand()%100+100) * cos(((i) * 71.0) / 4068.0)));
+		ss << serialBuffer;
+		ss << (round((rand()%100+100) * cos(((i) * 71.0) / 4068.0)));
 		ss << ",";
 		ss << (round((rand()%100+100) * sin(((i) * 71.0) / 4068.0)));
-		ss << "\n";*/
+		ss << "\n";
 		map.write(ss.str());
 		sleep(1);
 	}
+	while(true) {
+		std::cout << serialBuffer << endl;
+		sleep(1);
+	}*/
+	sleep(10);
 	map.close();
 	return scope.Close(Undefined());
 }

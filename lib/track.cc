@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <math.h>
+#include <vector>
 #include "Cv.h"
 #include "Callback.h"
 #include "Serial.cc"
@@ -18,7 +19,6 @@ using namespace v8;
 Cv cv;
 static Callback parent;
 Cordinate currentPoint(0,0);
-unsigned char serialBuffer[4096] = {0};
 int displacement[2];
 Map map;
 
@@ -32,12 +32,16 @@ Handle<v8::Value> stdStringTov8(const std::string& value) {
 
 void error(std::string err) {
 	//parent.call("error");
-	std::cout << "\033[1;31m" << "Error: " << err << "\033[0m\n" << err << std::endl;
+	std::cout << "\033[1;31m" << "Error: " << err << "\033[0m\n";
 	exit(1);
 }
 
-void serialData(unsigned char buf[4096]) {
-	//std::cout << buf << endl;
+void serialData(std::vector< std::vector<unsigned char> > buf) {
+	for (unsigned int lineIndex = 0; lineIndex < buf.size(); lineIndex++) {
+		for(unsigned int charIndex = 0; charIndex < buf[lineIndex].size(); charIndex++) {
+			cout << buf[lineIndex][charIndex];
+		}
+	}
 }
 
 void *startCvLocate(void *t) {
@@ -49,7 +53,7 @@ void *startCvDisplacement(void *t) {
 	return (void*)0;
 }
 void *startPollBuffer(void *t) {
-	Serial::pollBuffer(serialBuffer, &serialData, &error);
+	Serial::pollBuffer(&serialData, &error);
 	return (void*)0;
 }
 
@@ -96,8 +100,9 @@ Handle<Value> cords(const Arguments& args) {
 		std::cout << serialBuffer << endl;
 		sleep(1);
 	}*/
-	sleep(10);
-	map.close();
+	sleep(120);
+	error("times up!");
+	//map.close();
 	return scope.Close(Undefined());
 }
 

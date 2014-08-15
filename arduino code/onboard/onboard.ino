@@ -37,7 +37,7 @@ State statusLed(statusPin);
 Pwm gain, throttle, roll, pitch, yaw;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   gain.attach(gainPin);
   //throttle.attach(throttlePin);
@@ -55,7 +55,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  delay(10);
   statusLed.update();
   //unsigned long pulse = pulseIn(channel6, HIGH, 10000);
   // if(pulse > 2000) {

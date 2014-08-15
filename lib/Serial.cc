@@ -13,7 +13,7 @@
 
 #include "rs232.h"
 typedef void (*ErrorCall)(std::string);
-typedef void (*dataCall)(std::vector< std::vector<unsigned char> >);
+typedef void (*dataCall)(std::vector<unsigned char>);
 class Serial {
 public:
 	static void pollBuffer(dataCall returnData, ErrorCall returnError) {
@@ -64,7 +64,9 @@ public:
 						charIndex++;
 					}
 				}
-				returnData(lines);
+
+				for (unsigned int lineIndex = 0; lineIndex < lines.size(); lineIndex++)
+					returnData(lines[lineIndex]);
 			}
 
 #ifdef _WIN32

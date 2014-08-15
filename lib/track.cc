@@ -36,12 +36,18 @@ void error(std::string err) {
 	exit(1);
 }
 
-void serialData(std::vector< std::vector<unsigned char> > buf) {
-	for (unsigned int lineIndex = 0; lineIndex < buf.size(); lineIndex++) {
-		for(unsigned int charIndex = 0; charIndex < buf[lineIndex].size(); charIndex++) {
-			cout << buf[lineIndex][charIndex];
+void serialData(std::vector<unsigned char> buf) {
+	double vals[8];
+	int valIndex = 0, digit = 1;
+	for(unsigned int charIndex = 0; charIndex < buf.size(); charIndex++) {
+		char current = buf[charIndex];
+		std::cout << current;
+		if(current >= 0x30 && current <= 0x39) {
+			vals[valIndex] = (int)(current - '0');
+			valIndex++;
 		}
 	}
+	std::cout << std::endl << vals[0] << std::endl;
 }
 
 void *startCvLocate(void *t) {

@@ -55,7 +55,7 @@ void setup() {
 }
 
 void loop() {
-  delay(10);
+  delay(1000);
   statusLed.update();
   //unsigned long pulse = pulseIn(channel6, HIGH, 10000);
   // if(pulse > 2000) {
@@ -64,14 +64,16 @@ void loop() {
   unsigned long distanceL = ultrasonicLeft.read();    
   float heading = compass.getHeading();
   if(distanceL) {
+    Serial.print("0:");
     Serial.print( round(distanceL * cos((heading-45) * DEG_RAD)) );
     Serial.print(",");
     Serial.println( round(distanceL * sin((heading-45) * DEG_RAD)) );
   }
   unsigned long distanceR = ultrasonicRight.read();
   if(distanceR) {
+    Serial.print("1:");
     Serial.print( round(distanceR * cos((heading+45) * DEG_RAD)) );
-    Serial.print(",,");
+    Serial.print(",");
     Serial.println( round(distanceR * sin((heading+45) * DEG_RAD)) );
   }
   /*} 

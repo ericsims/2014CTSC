@@ -1,4 +1,5 @@
 require('js-yaml');
+var stdin = process.openStdin();
 var settings = require('./config.yaml');
 var Server = require('./lib/server.js');
 var server = new Server(settings);
@@ -12,7 +13,7 @@ console.log( track.locatePoint(function(msg) {
 
 //update server with point data
 var lastPoint;
-setInterval(function() {
+var pointUpdate = setInterval(function() {
 	var newPoint = track.getDataPoint();
 	console.log(JSON.stringify(newPoint));
 	if(lastPoint != newPoint) {
@@ -20,3 +21,16 @@ setInterval(function() {
 		lastPoint = newPoint;
 	}
 }, 500);
+
+stdin.on("data", function(data) {
+	data = data.toString().substring(0, data.length-1);
+	console.log("you entered: [" + data + "]");
+	if(data == 'exit'){
+		server.exitCleanly();
+		track.exitCleanly();
+		clearInterval(pointUpdate);
+		setTimeout(function() {
+			process.exit();
+		}, 1000);
+	}
+});

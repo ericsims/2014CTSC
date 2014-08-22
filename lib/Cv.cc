@@ -7,6 +7,8 @@
 using namespace cv;
 using namespace std;
 
+bool closeVideo = false;
+
 void Cv::debug() {
 	VideoCapture cap(0);
 	if ( !cap.isOpened() ) {
@@ -46,7 +48,7 @@ void Cv::debug() {
 	Mat imgLines = Mat::zeros( imgTmp.size(), CV_8UC3 );;
 
 
-	while (true) {
+	while (!closeVideo) {
 		Mat img;
 
 		bool bSuccess = cap.read(img); // read a new frame from video
@@ -103,10 +105,10 @@ void Cv::debug() {
 		imshow("Original", img); //show the original image
 
 		if (waitKey(30) == 27) { //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-			cvDestroyAllWindows();
-			break;
+			Cv::exitCleanly();
 		}
 	}
+	cap.release();
 }
 
 void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
@@ -118,13 +120,13 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 	int iLowH = 150;
 	int iHighH = 180;
 
-	int iLowS = 21;
+	int iLowS = 10;
 	int iHighS = 175;
 
-	int iLowV = 190;
+	int iLowV = 180;
 	int iHighV = 255;
 
-	do {
+	while (!closeVideo) {
 		//Capture a temporary image from the camera
 		Mat imgTmp;
 		cap.read(imgTmp);
@@ -175,7 +177,8 @@ void Cv::locatePoint(Cordinate &current, ErrorCall returnError) {
 				current = point;
 		}
 		// cout << timer.getPerSecond() << endl;
-	} while (true);
+	}
+	cap.release();
 }
 
 void Cv::displacement(int &angle, ErrorCall returnError) {
@@ -192,7 +195,7 @@ void Cv::displacement(int &angle, ErrorCall returnError) {
 	if ( !cap.isOpened() ) {
 		cout << "Cannot open the web cam" << endl;
 	}
-	do {
+	while(!closeVideo) {
 		cap.read(src);
 
 		//cvtColor( src, src, CV_BGR2GRAY );
@@ -257,6 +260,11 @@ void Cv::displacement(int &angle, ErrorCall returnError) {
 		}
 
 		angle = displacement[0];
-	} while (true);
+	}
+	cap.release();
 }
 
+void Cv::exitCleanly() {
+	cvDestroyAllWindows();
+	closeVideo = true;
+}

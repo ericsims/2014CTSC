@@ -162,7 +162,7 @@ int RS232_OpenComport(int comport_number, int baudrate)
     perror("unable to set portstatus");
     return(1);
   }
-
+  RS232_opened = 1;
   return(0);
 }
 

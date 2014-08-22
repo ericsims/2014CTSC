@@ -11,7 +11,7 @@ socket.on('point', function (data) {
 	c.setAttribute('height', window.innerHeight);
 	var context = c.getContext("2d");
 	context.beginPath();
-	context.arc(200, 200, 10, 0, 2 * Math.PI, false);
+	context.arc(data.x, data.y, 10, 0, 2 * Math.PI, false);
 	context.fillStyle = 'gray';
 	context.fill();
 	context.lineWidth = 2;

@@ -6,8 +6,8 @@ using namespace std;
 class Map {
 public:
 	Map();
-	void close();
 	void write(string);
+	void exitCleanly();
 private:
 	  ofstream cords;
 };

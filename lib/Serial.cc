@@ -18,25 +18,25 @@ class Serial {
 public:
 	static void pollBuffer(dataCall returnData, ErrorCall returnError) {
 		unsigned int portI = 2, cports[] = {22, 23, 24, 25, 26, 27, 28};
-		bool opened = false;
+		RS232_opened = false;
 		int n, bdrate = 115200;
 		unsigned char buf[4096] = "";
 
 		unsigned int arraySize = sizeof(cports)/sizeof(unsigned int);
 
-		for(portI = 0; portI < arraySize && !opened; portI++) {
+		for(portI = 0; portI < arraySize && !RS232_opened; portI++) {
 			std::cout << portI <<std::endl;
-			opened = !RS232_OpenComport(cports[portI], bdrate);
-			if(opened) break;
+			RS232_OpenComport(cports[portI], bdrate);
+			if(RS232_opened) break;
 			sleep(1);
 		}
 
-		if(opened)
-			std::cout << "comport opened" << std::endl;
+		if(RS232_opened)
+			std::cout << "comport RS232_opened" << std::endl;
 		else
 			returnError("Can not open comport");
 
-		while(true) {
+		while(RS232_opened) {
 			usleep(1000);
 			/*
 			std::string s = "123";
@@ -75,5 +75,10 @@ public:
 			usleep(100000);  // sleep for 100 milliSeconds
 #endif
 		}
+		RS232_CloseComport(cports[portI]);
+	}
+
+	static void exitCleanly() {
+		RS232_opened = false;
 	}
 };

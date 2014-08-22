@@ -62,6 +62,7 @@ extern "C" {
 
 #endif
 
+static int RS232_opened;
 int RS232_OpenComport(int, int);
 int RS232_PollComport(int, unsigned char *, int);
 int RS232_SendByte(int, unsigned char);

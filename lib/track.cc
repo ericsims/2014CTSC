@@ -41,7 +41,7 @@ void serialData(std::vector<unsigned char> buf) {
 	int valIndex = 0, digit = 1;
 	for(unsigned int charIndex = 0; charIndex < buf.size(); charIndex++) {
 		char current = buf[charIndex];
-		std::cout << current;
+			std::cout << current;
 		if(current >= 0x30 && current <= 0x39) {
 			vals[valIndex] = (int)(current - '0');
 			valIndex++;
@@ -106,10 +106,21 @@ Handle<Value> cords(const Arguments& args) {
 		std::cout << serialBuffer << endl;
 		sleep(1);
 	}*/
-	sleep(120);
-	error("times up!");
+	//sleep(120);
+	//error("times up!");
 	//map.close();
 	return scope.Close(Undefined());
+}
+
+Handle<Value> exitCleanly(const Arguments& args) {
+	HandleScope scope;
+
+	cv.exitCleanly();
+	map.exitCleanly();
+	Serial::exitCleanly();
+	Local<Object> obj = Object::New();
+	obj->Set(String::NewSymbol("status"), String::New( "done" ));
+	return scope.Close(obj);
 }
 
 void init(Handle<Object> exports) {
@@ -121,6 +132,8 @@ void init(Handle<Object> exports) {
 			FunctionTemplate::New(getDataPoint)->GetFunction());
 	exports->Set(String::NewSymbol("cords"),
 			FunctionTemplate::New(cords)->GetFunction());
+	exports->Set(String::NewSymbol("exitCleanly"),
+			FunctionTemplate::New(exitCleanly)->GetFunction());
 }
 
 NODE_MODULE(track, init)

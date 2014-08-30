@@ -41,7 +41,7 @@ void serialData(std::vector<unsigned char> buf) {
 	int valIndex = 0, digit = 1;
 	for(unsigned int charIndex = 0; charIndex < buf.size(); charIndex++) {
 		char current = buf[charIndex];
-			std::cout << current;
+		std::cout << current;
 		if(current >= 0x30 && current <= 0x39) {
 			vals[valIndex] = (int)(current - '0');
 			valIndex++;
@@ -114,13 +114,15 @@ Handle<Value> cords(const Arguments& args) {
 
 Handle<Value> exitCleanly(const Arguments& args) {
 	HandleScope scope;
-
-	cv.exitCleanly();
-	map.exitCleanly();
-	Serial::exitCleanly();
 	Local<Object> obj = Object::New();
-	obj->Set(String::NewSymbol("status"), String::New( "done" ));
-	return scope.Close(obj);
+	obj->Set(String::NewSymbol("exit"), String::New( "done" ));
+
+	if(cv.exitCleanly() &&
+			map.exitCleanly() &&
+			Serial::exitCleanly())
+		return scope.Close(obj);
+	else
+		return scope.Close(Undefined());
 }
 
 void init(Handle<Object> exports) {

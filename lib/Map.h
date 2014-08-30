@@ -7,7 +7,7 @@ class Map {
 public:
 	Map();
 	void write(string);
-	void exitCleanly();
+	int exitCleanly();
 private:
 	  ofstream cords;
 };

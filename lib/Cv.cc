@@ -264,7 +264,8 @@ void Cv::displacement(int &angle, ErrorCall returnError) {
 	cap.release();
 }
 
-void Cv::exitCleanly() {
+int Cv::exitCleanly() {
 	cvDestroyAllWindows();
 	closeVideo = true;
+	return 1; // successful
 }

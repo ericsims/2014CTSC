@@ -1,5 +1,6 @@
 #include "Map.h"
 #include <sstream>
+#include <iostream>
 #include <ctime>
 using namespace std;
 
@@ -24,6 +25,7 @@ void Map::write(string str) {
 	//cords << str;
 }
 
-void Map::exitCleanly() {
+int Map::exitCleanly() {
 	cords.close();
+	return 1; // successful
 }

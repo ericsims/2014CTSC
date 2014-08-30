@@ -78,7 +78,8 @@ public:
 		RS232_CloseComport(cports[portI]);
 	}
 
-	static void exitCleanly() {
+	static int exitCleanly() {
 		RS232_opened = false;
+		return 1; // successful
 	}
 };

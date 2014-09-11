@@ -37,17 +37,9 @@ void error(std::string err) {
 }
 
 void serialData(std::vector<unsigned char> buf) {
-	double vals[8];
-	int valIndex = 0, digit = 1;
-	for(unsigned int charIndex = 0; charIndex < buf.size(); charIndex++) {
-		char current = buf[charIndex];
-		std::cout << current;
-		if(current >= 0x30 && current <= 0x39) {
-			vals[valIndex] = (int)(current - '0');
-			valIndex++;
-		}
-	}
-	std::cout << std::endl << vals[0] << std::endl;
+	int i;
+	sscanf(buf, "%d", &i);
+	std::cout << vals[0] << std::endl;
 }
 
 void *startCvLocate(void *t) {
